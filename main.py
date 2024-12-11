@@ -1,65 +1,99 @@
 
-def balance():
-    print(f"Your balance: {balance}")
+import random
 
+words = ("apple", 
+         "rock", 
+         "stars", 
+         "palace", 
+         "python", 
+         "magic", 
+         "hotel", 
+         "bed",  
+         "tv", 
+         "animal", 
+         "officer", 
+         "clown", 
+         "trap", 
+         "presents", 
+         "winter", 
+         "vacation")
+         
+hangman_art = {0: ("   ", 
+                   "   ", 
+                   "   "),
+               1: (" o ", 
+                   "   ", 
+                   "   "),
+               2: (" o ", 
+                   " | ", 
+                   "   "),
+               3: (" o ", 
+                   "/| ", 
+                   "   "),
+               4: (" o ", 
+                   "/|\\", 
+                   "   "),
+               5: (" o ", 
+                   "/|\\", 
+                   "/  "),
+               6: (" o ", 
+                   "/|\\", 
+                   "/ \\")}
 
-def income():
-	print("**************************")
-	amount = float(input("Enter your income: $"))
-	print("**************************")
-	
-	if amount < 0:
-	    print("That's NOT a valid amount")
-	    return 0
-	else:
-	    return amount
-def outcome():
-    print("**************************")
-    amount = float(input("Enter your outcome: $"))
-    print("**************************")
-    
-    if amount < 0:
-        print("That's NOT a valid amount")
-        return 0
-    else:
-        return amount
-    
-    
+def display_man(wrong_guesses):
+    print("######")
+    for line in hangman_art[wrong_guesses]:
+        print(line)
+    print("######")
 
+def display_hint(hint):
+    print(" ".join(hint))
 
-is_running = True
+def display_answer(answer):
+    print(" ".join(answer))
 
-balance = float(input("Enter your amount now: "))
-while is_running:
-    print("**************************")
-    print("   COIN COUNTER Program   ")
-    print("**************************")
+def main():
+    answer = random.choice(words)
+    hint = ['_'] * len(answer)
+    wrong_guesses = 0
+    guessed_letters = set()
+    is_running = True
     
-    print("1. Show Balance")
-    print("2. Income")
-    print("3. Outcome")
-    print("4. Exit")
-    menu = input("Choose an option (1-4): ")
-    
-    if menu == "1":
-        print(f"Your current balance is: ${balance:.2f}")
+    while is_running:
+        display_man(wrong_guesses)
+        display_hint(hint)
+        guess = input("Enter a letter: ").lower()
         
-    elif menu == "2":
-        balance += income()
+        if guess in guessed_letters:
+            print("Letter already guessed")
+            continue
         
-    elif menu == "3":
-        balance -= outcome()
-    
-    elif menu == "4":
-        print("Have a good day! Bye")
+        guessed_letters.add(guess)
         
-    else:
-        print("**************************")
-        print("   COIN COUNTER Program   ")
-        print("**************************")
         
-        print("1. Show Balance")
-        print("2. Income")
-        print("3. Outcome")
-        print("4. Exit")
-        menu = input("Please choose an option (1-4): ")
+        if len(guess) != 1 or not guess.isalpha():
+            print("Invalid letter")
+            continue
+        
+        if guess in answer:
+            for i in range(len(answer)):
+                if answer[i] == guess:
+                    hint[i] = guess  
+                    
+        else:
+            wrong_guesses += 1
+            
+        if "_" not in hint:
+            display_man(wrong_guesses)
+            display_answer(answer)
+            print("YOU WIN")
+            is_running = False
+            
+        elif wrong_guesses >= len(hangman_art) - 1:
+            display_man(wrong_guesses)
+            display_answer(answer)
+            print("YOU WIN")
+            is_running = False
+
+if __name__ == '__main__':
+    main()
